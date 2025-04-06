@@ -13,6 +13,7 @@
 <p align="center">
   <strong>“Where ideas ignite, models collaborate, and innovation thrives.”</strong>
 </p>
+
 ---
 
 ## 🧬 What is Sparkience?
