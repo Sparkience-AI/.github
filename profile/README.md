@@ -14,6 +14,7 @@
   <strong>“Where ideas ignite, models collaborate, and innovation thrives.”</strong>
 </p>
 
+<img src="https://github.com/Sparkience-AI/.github/blob/main/banner.jpeg" height=auto width=auto>
 ---
 
 ## 🧬 What is Sparkience?
