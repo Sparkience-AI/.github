@@ -13,8 +13,6 @@
 <p align="center">
   <strong>“Where ideas ignite, models collaborate, and innovation thrives.”</strong>
 </p>
-
-<img src="banner.jpeg" height=auto width=auto>
 ---
 
 ## 🧬 What is Sparkience?
