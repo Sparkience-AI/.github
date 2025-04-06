@@ -14,7 +14,7 @@
   <strong>“Where ideas ignite, models collaborate, and innovation thrives.”</strong>
 </p>
 
-<img src="https://drive.google.com/file/d/14DHbFMgQcQBOVriywN7FgHqxjVXpCqR6/view?usp=sharing" height=auto width=auto>
+<img src="banner.png" height=auto width=auto>
 ---
 
 ## 🧬 What is Sparkience?
