@@ -5,7 +5,6 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/github/license/Sparkience-AI/Sparkience-AI?style=flat-square&color=informational"/>
   <img src="https://img.shields.io/badge/Contributions-Welcome-6A5ACD?style=flat-square&logo=github"/>
   <img src="https://img.shields.io/badge/Built%20with-%F0%9F%92%A1AI-blueviolet?style=flat-square"/>
 </p>
