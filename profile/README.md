@@ -45,6 +45,16 @@ Whether you're into prompt engineering, agentic AI, LLM apps, or just want to au
 
 ---
 
+### 🔬 [`Spark Insights`](https://github.com/Sparkience-AI/spark-insights)
+> *Autonomous AI Data Scientist that thinks for itself.*
+
+- 🤖 Complete end-to-end data analysis agent 
+- 📊 Smart visualizations + ML model building  
+- 📄 Auto-generates PowerPoint presentations  
+- 🧠 Powered by SmolagentsAI framework
+
+---
+
 ### 🧪 [`SparkPrompt`](https://github.com/Sparkience-AI/SparkPrompt)
 > *Prompt Engineering Gym.*
 
