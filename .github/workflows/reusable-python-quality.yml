@@ -1,0 +1,56 @@
+name: Reusable Python quality
+
+on:
+  workflow_call:
+    inputs:
+      python-version:
+        description: Supported Python version to validate.
+        required: false
+        type: string
+        default: "3.12"
+      working-directory:
+        description: Repository-relative directory containing pyproject.toml and uv.lock.
+        required: false
+        type: string
+        default: .
+      run-type-check:
+        description: Run mypy against the src directory.
+        required: false
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  python-quality:
+    name: Python quality (${{ inputs.python-version }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
+    steps:
+      - name: Check out caller repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: ${{ inputs.python-version }}
+      - name: Set up uv
+        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          enable-cache: true
+      - name: Verify locked environment
+        run: uv sync --locked --all-groups
+      - name: Check formatting
+        run: uv run --locked ruff format --check .
+      - name: Lint
+        run: uv run --locked ruff check .
+      - name: Type check
+        if: inputs.run-type-check
+        run: uv run --locked mypy src
+      - name: Test
+        run: uv run --locked pytest -q
