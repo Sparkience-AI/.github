@@ -1,0 +1,149 @@
+name: Reusable documentation and discovery validation
+
+on:
+  workflow_call:
+    inputs:
+      working-directory:
+        description: Repository-relative directory to validate.
+        required: false
+        type: string
+        default: .
+      site-entry:
+        description: Optional repository-relative HTML entry point, such as index.html.
+        required: false
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+
+jobs:
+  docs-discovery:
+    name: Documentation and discovery
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      TARGET_DIRECTORY: ${{ inputs.working-directory }}
+      SITE_ENTRY: ${{ inputs.site-entry }}
+    steps:
+      - name: Check out caller repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.12"
+      - name: Validate documentation and discovery metadata
+        shell: python
+        run: |
+          import json
+          import os
+          import re
+          import sys
+          from html.parser import HTMLParser
+          from pathlib import Path
+          from urllib.parse import unquote, urlsplit
+
+          class DiscoveryParser(HTMLParser):
+              def __init__(self):
+                  super().__init__()
+                  self.canonicals = []
+                  self.descriptions = []
+                  self.h1_count = 0
+                  self.json_ld = []
+                  self._json_ld_parts = None
+
+              def handle_starttag(self, tag, attrs):
+                  attributes = {key.lower(): (value or "") for key, value in attrs}
+                  tag = tag.lower()
+                  if tag == "link" and "canonical" in attributes.get("rel", "").lower().split():
+                      self.canonicals.append(attributes.get("href", "").strip())
+                  elif tag == "meta" and attributes.get("name", "").lower() == "description":
+                      self.descriptions.append(attributes.get("content", "").strip())
+                  elif tag == "h1":
+                      self.h1_count += 1
+                  elif tag == "script" and attributes.get("type", "").lower() == "application/ld+json":
+                      self._json_ld_parts = []
+
+              def handle_data(self, data):
+                  if self._json_ld_parts is not None:
+                      self._json_ld_parts.append(data)
+
+              def handle_endtag(self, tag):
+                  if tag.lower() == "script" and self._json_ld_parts is not None:
+                      self.json_ld.append("".join(self._json_ld_parts))
+                      self._json_ld_parts = None
+
+          root = Path(os.environ["TARGET_DIRECTORY"]).resolve()
+          errors = []
+          if not root.is_dir():
+              errors.append(f"Working directory does not exist: {root}")
+
+          readme = root / "README.md"
+          if not readme.is_file():
+              errors.append("README.md is required")
+
+          markdown_files = list(root.rglob("*.md")) if root.is_dir() else []
+          link_pattern = re.compile(r"(?<!!)\[[^\]]+\]\(([^)]+)\)")
+          for document in markdown_files:
+              text = document.read_text(encoding="utf-8")
+              for raw_target in link_pattern.findall(text):
+                  target = raw_target.strip().split(maxsplit=1)[0].strip("<>")
+                  parsed = urlsplit(target)
+                  if not target or target.startswith("#") or parsed.scheme or target.startswith("//"):
+                      continue
+                  relative = unquote(parsed.path)
+                  if not relative:
+                      continue
+                  candidate = (document.parent / relative).resolve()
+                  try:
+                      candidate.relative_to(root)
+                  except ValueError:
+                      errors.append(f"{document.relative_to(root)} links outside the repository: {target}")
+                      continue
+                  if not candidate.exists():
+                      errors.append(f"{document.relative_to(root)} has a missing local link: {target}")
+
+          site_entry = os.environ.get("SITE_ENTRY", "").strip()
+          if site_entry:
+              page = (root / site_entry).resolve()
+              try:
+                  page.relative_to(root)
+              except ValueError:
+                  errors.append("site-entry must stay inside working-directory")
+              if not page.is_file():
+                  errors.append(f"Site entry does not exist: {site_entry}")
+              else:
+                  html = page.read_text(encoding="utf-8")
+                  parser = DiscoveryParser()
+                  parser.feed(html)
+                  if len(parser.canonicals) != 1:
+                      errors.append(
+                          f"{site_entry} must contain exactly one canonical link; "
+                          f"found {len(parser.canonicals)}"
+                      )
+                  elif urlsplit(parser.canonicals[0]).scheme not in {"http", "https"}:
+                      errors.append(f"{site_entry} canonical link must be an absolute HTTP(S) URL")
+                  if len(parser.descriptions) != 1 or not parser.descriptions[0]:
+                      errors.append(f"{site_entry} must contain exactly one non-empty meta description")
+                  if parser.h1_count != 1:
+                      errors.append(f"{site_entry} must contain exactly one h1; found {parser.h1_count}")
+                  if not parser.json_ld:
+                      errors.append(f"{site_entry} must contain at least one JSON-LD block")
+                  for payload in parser.json_ld:
+                      try:
+                          json.loads(payload)
+                      except json.JSONDecodeError as exc:
+                          errors.append(f"{site_entry} contains invalid JSON-LD: {exc}")
+                  public = page.parent / "public"
+                  for filename in ("robots.txt", "sitemap.xml"):
+                      if not (public / filename).is_file() and not (page.parent / filename).is_file():
+                          errors.append(f"Static site is missing {filename}")
+
+          if errors:
+              print("Documentation/discovery validation failed:")
+              for error in errors:
+                  print(f"- {error}")
+              sys.exit(1)
+          print(f"Validated {len(markdown_files)} Markdown files" + (f" and {site_entry}" if site_entry else ""))

@@ -1,0 +1,56 @@
+name: Bug report
+description: Report a reproducible problem without sensitive data.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: Do not report vulnerabilities or include credentials, personal data, or private datasets here.
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+      placeholder: Release tag or full commit SHA
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: OS, runtime, browser, model/provider where relevant
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Minimal reproduction
+      description: Use synthetic or public test data and redact logs.
+    validations:
+      required: true
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional context
+      description: Add safe logs, screenshots, or links if useful.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Confirmation
+      options:
+        - label: I searched for existing reports.
+          required: true
+        - label: This report contains no secrets, private data, or vulnerability details.
+          required: true

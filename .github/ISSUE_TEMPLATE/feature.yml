@@ -1,0 +1,47 @@
+name: Feature proposal
+description: Propose a scoped product or engineering improvement.
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: Describe the user or maintainer problem, not only the desired implementation.
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Desired outcome
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope and non-goals
+    validations:
+      required: true
+  - type: dropdown
+    id: impact
+    attributes:
+      label: Risk areas
+      multiple: true
+      options:
+        - Security
+        - Privacy or data retention
+        - AI or model behavior
+        - Accessibility
+        - Deployment or operations
+        - Dependencies or licensing
+        - None known
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Validation approach
+      description: Explain how the outcome can be tested or measured.
+    validations:
+      required: true
