@@ -1,0 +1,60 @@
+name: Reusable Python release evidence
+
+on:
+  workflow_call:
+    inputs:
+      python-version:
+        type: string
+        required: false
+        default: "3.12"
+      artifact-name:
+        type: string
+        required: false
+        default: "python-release-candidate"
+
+permissions:
+  contents: read
+  id-token: write
+  attestations: write
+  artifact-metadata: write
+
+jobs:
+  evidence:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: ${{ inputs.python-version }}
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+      - run: uv sync --locked --all-groups
+      - run: uv run --locked pytest
+      - run: uv build --no-sources --out-dir release/dist
+      - name: Export dependency evidence
+        run: |
+          mkdir -p release
+          uv export --locked --all-groups --all-extras --format requirements-txt --no-hashes --output-file release/requirements.txt
+          uv tool run --from cyclonedx-bom==7.3.0 cyclonedx-py requirements release/requirements.txt --output-format JSON --output-file release/sbom.cdx.json
+      - name: Generate checksums and manifest
+        shell: python
+        run: |
+          import hashlib, json, os, pathlib, platform
+          root = pathlib.Path("release")
+          files = sorted(p for p in (root / "dist").glob("*") if p.is_file())
+          rows = [{"path": p.as_posix(), "sha256": hashlib.sha256(p.read_bytes()).hexdigest(), "bytes": p.stat().st_size} for p in files]
+          (root / "SHA256SUMS").write_text("".join(f"{r['sha256']}  {r['path']}\n" for r in rows), encoding="utf-8")
+          (root / "release-manifest.json").write_text(json.dumps({"schema_version": 1, "commit": os.environ.get("GITHUB_SHA"), "python": platform.python_version(), "artifacts": rows}, indent=2) + "\n", encoding="utf-8")
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: ${{ inputs.artifact-name }}
+          path: release/
+          if-no-files-found: error
+      - name: Attest build provenance
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+        with:
+          subject-checksums: release/SHA256SUMS
+      - name: Attest SBOM
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+        with:
+          subject-checksums: release/SHA256SUMS
+          sbom-path: release/sbom.cdx.json
