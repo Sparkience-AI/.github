@@ -18,10 +18,12 @@
 
 ## 🧬 What is Sparkience?
 
-> **Sparkience** is a next-gen open-source AI lab created to experiment, launch, and share bleeding-edge AI tools.  
-> Think of it as your AI-powered Swiss Army Knife — made for devs, tinkerers, researchers, and solo builders.
+> **Sparkience** is an open-source lab for practical, inspectable AI and data tools.
+> The projects are designed to run locally; hosted sites are demonstrations where available.
 
-Whether you're into prompt engineering, agentic AI, LLM apps, or just want to automate your chaos — **Sparkience has something for you.**
+The portfolio covers grounded document Q&A, prompt learning, forecasting, deterministic analytics,
+local-first chat, financial literacy, and an opt-in clipboard assistant. Generative tools support
+documented bring-your-own-key providers where appropriate; deterministic tools stay deterministic.
 
 ---
 
@@ -31,35 +33,36 @@ Whether you're into prompt engineering, agentic AI, LLM apps, or just want to au
 > *Clipboard assistant smarter than your intern.*
 
 - 🧠 Real-time NLP clipboard monitoring  
-- 👻 Stealth tray mode  
-- 📴 Offline-first for true privacy
+- ⌨️ System-tray controls and hotkey capture
+- 🔒 Explicit capture by default, with visible session-only clipboard monitoring as an opt-in
+- 📴 Local Ollama by default, with optional Gemini, OpenAI, or Anthropic BYOK routes
 
 ---
 
 ### 🧠 [`DSSential - The AI Chief`](https://github.com/Sparkience-AI/DSSential-The-AI-Chief)
 > *Business brains in one tab.*
 
-- 📊 Forecasting with Prophet  
-- 🔍 What-if simulations  
-- 🎯 Optimization insights
+- 📊 Validated univariate forecasting
+- 🔍 Transparent arithmetic scenario previews
+- 🧾 Reproducible diagnostics and limitations
 
 ---
 
 ### 🔬 [`Spark Insights`](https://github.com/Sparkience-AI/spark-insights)
-> *Autonomous AI Data Scientist that thinks for itself.*
+> *Deterministic, inspectable data analysis.*
 
-- 🤖 Complete end-to-end data analysis agent 
-- 📊 Smart visualizations + ML model building  
-- 📄 Auto-generates PowerPoint presentations  
-- 🧠 Powered by SmolagentsAI framework
+- 📊 Dataset profiling, regression, and classification
+- ✅ Explicit targets, validation, and reproducible outputs
+- 🧠 Optional narration receives validated aggregate results only
 
 ---
 
 ### 🧪 [`SparkPrompt`](https://github.com/Sparkience-AI/SparkPrompt)
 > *Prompt Engineering Gym.*
 
-- 🧪 LangChain + Gemini API integration  
-- 🧠 Evaluates + improves prompts  
+- 🧪 Provider-independent prompt-learning exercises and templates
+- 🧠 Generates, evaluates, and refines prompts
+- 🔑 Gemini, OpenAI, or Anthropic with a user-supplied key
 - 🖥️ Web UI for interactive refinement
 
 ---
@@ -67,9 +70,9 @@ Whether you're into prompt engineering, agentic AI, LLM apps, or just want to au
 ### 📚 [`SparkDocs`](https://github.com/Sparkience-AI/SparkDocs)
 > *Your documents, now intelligent.*
 
-- 🔍 Smart search + TL;DR  
-- 📂 Works across file types  
-- 📚 LLM-powered querying
+- 🔍 Hybrid dense + keyword retrieval with grounded citations
+- 📂 PDF, DOCX, and PPTX ingestion
+- 🔑 Gemini, OpenAI, or Anthropic with a user-supplied key
 
 ---
 
@@ -77,8 +80,17 @@ Whether you're into prompt engineering, agentic AI, LLM apps, or just want to au
 > *Ollama, but make it ✨aesthetic✨.*
 
 - 🌌 Sleek dark UI + chat history  
-- ⚙️ Model selector  
-- 🔮 Streaming output & future integrations
+- ⚙️ Local model selector and streamed responses
+- 🔑 Optional Gemini, OpenAI, or Anthropic with a user-supplied key
+
+---
+
+### 💼 [`Sparkfolio`](https://github.com/Sparkience-AI/sparkfolio)
+> *A deterministic financial-literacy framework.*
+
+- 📚 Educational, non-advisory portfolio review
+- 🔎 Inspectable claims and evidence status
+- 🌐 Static and local-first, with no model or account dependency
 
 ---
 
@@ -93,11 +105,11 @@ We're here to empower solo builders and open-source rebels with tools that make 
 
 ## 🛠️ Getting Started
 
-Each repo includes:
+Each product repository documents its available:
 - 🔧 Setup steps
 - 👀 Usage examples
-- 🚀 Screenshots & demos
-- 💾 Ready-to-fork starter code
+- 🧪 Validation and limitations
+- 🔒 Privacy and provider boundaries
 
 Pick a tool, clone it, and break stuff. Then build better.
 
@@ -108,14 +120,15 @@ Pick a tool, clone it, and break stuff. Then build better.
 ✨ **We’re open to contributors!** ✨  
 Designers, prompt artists, developers, curious explorers — you’re welcome here.
 
-Each repo has a `CONTRIBUTING.md` to get you onboarded fast.
+Start with the organization-wide [contribution guide](https://github.com/Sparkience-AI/.github/blob/main/CONTRIBUTING.md).
+Individual repositories may add product-specific instructions.
 
 ---
 
 ## 📄 License
 
-All Sparkience projects are MIT-licensed.  
-Use, fork, remix, build on — just don’t use it to launch Skynet.
+Licenses are declared per repository. Most projects use MIT; Sparkle AI uses GPL-2.0. Check the
+target repository's `LICENSE` file before using or redistributing its code.
 
 ---
 
