@@ -1,0 +1,31 @@
+name: Foundation attested release fixtures
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+  attestations: write
+  artifact-metadata: write
+
+jobs:
+  python-release-evidence:
+    uses: ./.github/workflows/reusable-python-release.yml
+    with:
+      python-version: "3.12"
+      working-directory: tests/fixtures/python-quality
+      artifact-name: foundation-python-attested-release-fixture
+      expected-version: "0.1.0"
+      enable-attestations: true
+      retention-days: 7
+
+  node-release-evidence:
+    uses: ./.github/workflows/reusable-node-release.yml
+    with:
+      node-version: "24"
+      working-directory: tests/fixtures/node-release
+      artifact-name: foundation-node-attested-release-fixture
+      expected-version: "0.1.0"
+      enable-attestations: true
+      retention-days: 7

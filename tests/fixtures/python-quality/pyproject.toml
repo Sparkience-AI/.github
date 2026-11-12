@@ -1,14 +1,27 @@
+[build-system]
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
 [project]
 name = "foundation-workflow-fixture"
 version = "0.1.0"
 requires-python = ">=3.11,<3.14"
+dependencies = ["packaging>=24,<27"]
+
+[project.optional-dependencies]
+demo = ["typing-extensions>=4.12,<5"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/foundation_fixture"]
 
 [dependency-groups]
 dev = [
+  "hatchling>=1.27,<2",
   "mypy>=1.13,<2",
   "pytest>=8.3,<9",
   "ruff>=0.8,<1",
 ]
+release = ["cyclonedx-bom==7.6.0"]
 
 [tool.mypy]
 python_version = "3.12"
@@ -24,6 +37,3 @@ target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
-
-[tool.uv]
-package = false

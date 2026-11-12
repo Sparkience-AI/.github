@@ -8,7 +8,14 @@ This repository supplies shared community-health files, templates, and reusable 
 
 `reusable-docs-geo.yml` validates a README, local Markdown links, and optional static-site discovery basics. Pass `site-entry: index.html` for a static site. It intentionally does not score prose, make network requests, or treat experimental files such as `llms.txt` as a maturity gate.
 
-`reusable-python-release.yml` and `reusable-node-release.yml` build release candidates, generate checksums and CycloneDX SBOMs, upload the evidence bundle, and create GitHub artifact attestations. They do not publish a package or deploy a product. Callers must supply compatible test/build scripts and pin this repository at an immutable commit SHA.
+`reusable-python-release.yml` and `reusable-node-release.yml` build release candidates, validate
+artifact/package and `v<version>` tag identity, smoke-test installed/built output, generate checksums
+and artifact-derived CycloneDX SBOMs, upload the evidence bundle, and optionally create GitHub
+artifact attestations. They do not publish a package or deploy a product. Callers must supply
+compatible test/build scripts, explicitly grant attestation permissions only when enabled, and pin
+this repository at an immutable commit SHA. The foundation
+exercises both workflows without attestations on each change and provides a controlled manual
+attested-fixture workflow for post-merge validation.
 
 Caller workflows must declare their own triggers, concurrency, repository-specific permissions, and deployment steps. Do not pass secrets to a reusable quality workflow unless a reviewed use case requires them.
 
