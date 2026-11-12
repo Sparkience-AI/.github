@@ -7,10 +7,26 @@ on:
         type: string
         required: false
         default: "24"
+      working-directory:
+        type: string
+        required: false
+        default: "."
       artifact-name:
         type: string
         required: false
         default: "node-release-candidate"
+      expected-version:
+        type: string
+        required: false
+        default: ""
+      enable-attestations:
+        type: boolean
+        required: false
+        default: true
+      retention-days:
+        type: number
+        required: false
+        default: 14
 
 permissions:
   contents: read
@@ -21,33 +37,135 @@ permissions:
 jobs:
   evidence:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: ${{ inputs.node-version }}
           cache: npm
+          cache-dependency-path: ${{ inputs.working-directory }}/package-lock.json
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.12"
       - run: npm ci
       - run: npm test
       - run: npm run build
-      - name: Generate SBOM and checksums
+      - name: Validate package and tag identity
+        shell: python
+        env:
+          EXPECTED_VERSION: ${{ inputs.expected-version }}
+        run: |
+          import json, os, pathlib
+
+          package = json.loads(pathlib.Path("package.json").read_text(encoding="utf-8"))
+          lock = json.loads(pathlib.Path("package-lock.json").read_text(encoding="utf-8"))
+          name = package.get("name")
+          version = package.get("version")
+          lock_version = lock.get("packages", {}).get("", {}).get("version") or lock.get("version")
+          if not name or not version:
+              raise SystemExit("package.json must declare name and version")
+          if version == "0.0.0":
+              raise SystemExit("placeholder version 0.0.0 cannot produce release evidence")
+          if lock_version != version:
+              raise SystemExit("package.json and package-lock.json versions must match")
+          expected = os.environ.get("EXPECTED_VERSION", "").strip()
+          if expected and expected != version:
+              raise SystemExit(f"expected version {expected} does not match package version {version}")
+          if os.environ.get("GITHUB_REF_TYPE") == "tag" and os.environ.get("GITHUB_REF_NAME") != f"v{version}":
+              raise SystemExit(f"tag must be v{version}")
+          pathlib.Path("release").mkdir(exist_ok=True)
+          pathlib.Path("release/package-metadata.json").write_text(
+              json.dumps({"name": name, "version": version}, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+      - name: Generate dependency and built-file SBOM
         run: |
           mkdir -p release
-          npm sbom --sbom-format cyclonedx > release/sbom.cdx.json
-          find dist -type f -print0 | sort -z | xargs -0 sha256sum > release/SHA256SUMS
+          npm sbom --omit=dev --sbom-format cyclonedx > release/sbom.cdx.json
+          python - <<'PY'
+          import hashlib, json, pathlib
+
+          root = pathlib.Path("dist")
+          if not root.is_dir():
+              raise SystemExit("npm run build must create dist/")
+          sbom_path = pathlib.Path("release/sbom.cdx.json")
+          sbom = json.loads(sbom_path.read_text(encoding="utf-8"))
+          components = sbom.setdefault("components", [])
+          for path in sorted(item for item in root.rglob("*") if item.is_file()):
+              digest = hashlib.sha256(path.read_bytes()).hexdigest()
+              relative = path.as_posix()
+              components.append(
+                  {
+                      "type": "file",
+                      "name": relative,
+                      "bom-ref": f"file:{relative}@sha256:{digest}",
+                      "hashes": [{"alg": "SHA-256", "content": digest}],
+                  }
+              )
+          sbom_path.write_text(json.dumps(sbom, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+          PY
+      - name: Generate checksums and evidence manifest
+        shell: python
+        run: |
+          import hashlib, json, os, pathlib, subprocess
+
+          release = pathlib.Path("release")
+          metadata = json.loads((release / "package-metadata.json").read_text(encoding="utf-8"))
+          files = sorted(path for path in pathlib.Path("dist").rglob("*") if path.is_file())
+          artifacts = [
+              {
+                  "path": path.as_posix(),
+                  "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+                  "bytes": path.stat().st_size,
+              }
+              for path in files
+          ]
+          if not artifacts:
+              raise SystemExit("dist/ contains no release artifacts")
+          (release / "SHA256SUMS").write_text(
+              "".join(f"{row['sha256']}  {row['path']}\n" for row in artifacts),
+              encoding="utf-8",
+          )
+          sbom_hash = hashlib.sha256((release / "sbom.cdx.json").read_bytes()).hexdigest()
+          (release / "release-manifest.json").write_text(
+              json.dumps(
+                  {
+                      "schema_version": 2,
+                      "package": metadata,
+                      "commit": os.environ.get("GITHUB_SHA"),
+                      "ref": os.environ.get("GITHUB_REF"),
+                      "event": os.environ.get("GITHUB_EVENT_NAME"),
+                      "node": subprocess.check_output(["node", "--version"], text=True).strip(),
+                      "artifacts": artifacts,
+                      "sbom": {"path": "sbom.cdx.json", "sha256": sbom_hash},
+                  },
+                  indent=2,
+                  sort_keys=True,
+              ) + "\n",
+              encoding="utf-8",
+          )
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: ${{ inputs.artifact-name }}
           path: |
-            dist/
-            release/
+            ${{ inputs.working-directory }}/dist/
+            ${{ inputs.working-directory }}/release/
           if-no-files-found: error
+          retention-days: ${{ inputs.retention-days }}
       - name: Attest build provenance
+        if: inputs.enable-attestations
         uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
         with:
-          subject-checksums: release/SHA256SUMS
+          subject-checksums: ${{ inputs.working-directory }}/release/SHA256SUMS
       - name: Attest SBOM
+        if: inputs.enable-attestations
         uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
         with:
-          subject-checksums: release/SHA256SUMS
-          sbom-path: release/sbom.cdx.json
+          subject-checksums: ${{ inputs.working-directory }}/release/SHA256SUMS
+          sbom-path: ${{ inputs.working-directory }}/release/sbom.cdx.json

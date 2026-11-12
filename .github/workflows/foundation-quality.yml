@@ -17,3 +17,23 @@ jobs:
     with:
       python-version: "3.12"
       working-directory: tests/fixtures/python-quality
+
+  python-release-evidence:
+    uses: ./.github/workflows/reusable-python-release.yml
+    with:
+      python-version: "3.12"
+      working-directory: tests/fixtures/python-quality
+      artifact-name: foundation-python-release-fixture
+      expected-version: "0.1.0"
+      enable-attestations: false
+      retention-days: 1
+
+  node-release-evidence:
+    uses: ./.github/workflows/reusable-node-release.yml
+    with:
+      node-version: "24"
+      working-directory: tests/fixtures/node-release
+      artifact-name: foundation-node-release-fixture
+      expected-version: "0.1.0"
+      enable-attestations: false
+      retention-days: 1
