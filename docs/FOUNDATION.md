@@ -12,7 +12,8 @@ This repository supplies shared community-health files, templates, and reusable 
 artifact/package and `v<version>` tag identity, smoke-test installed/built output, generate checksums
 and artifact-derived CycloneDX SBOMs, upload the evidence bundle, and optionally create GitHub
 artifact attestations. They do not publish a package or deploy a product. Callers must supply
-compatible test/build scripts and pin this repository at an immutable commit SHA. The foundation
+compatible test/build scripts, explicitly grant attestation permissions only when enabled, and pin
+this repository at an immutable commit SHA. The foundation
 exercises both workflows without attestations on each change and provides a controlled manual
 attested-fixture workflow for post-merge validation.
 

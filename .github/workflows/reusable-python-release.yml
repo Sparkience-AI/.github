@@ -28,12 +28,6 @@ on:
         required: false
         default: 14
 
-permissions:
-  contents: read
-  id-token: write
-  attestations: write
-  artifact-metadata: write
-
 jobs:
   evidence:
     runs-on: ubuntu-latest
