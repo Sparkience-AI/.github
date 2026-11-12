@@ -131,6 +131,21 @@ jobs:
             --output-reproducible \
             --output-format JSON \
             --output-file release/sbom.cdx.json
+      - name: Add reproducible CycloneDX serial
+        shell: python
+        run: |
+          import json, os, pathlib, uuid
+
+          path = pathlib.Path("release/sbom.cdx.json")
+          sbom = json.loads(path.read_text(encoding="utf-8"))
+          workspace = pathlib.Path(os.environ["GITHUB_WORKSPACE"]).resolve()
+          source_dir = pathlib.Path.cwd().resolve().relative_to(workspace).as_posix()
+          identity = (
+              f"https://github.com/{os.environ['GITHUB_REPOSITORY']}/commit/"
+              f"{os.environ['GITHUB_SHA']}#cyclonedx:{source_dir}"
+          )
+          sbom["serialNumber"] = f"urn:uuid:{uuid.uuid5(uuid.NAMESPACE_URL, identity)}"
+          path.write_text(json.dumps(sbom, indent=2, sort_keys=True) + "\n", encoding="utf-8")
       - name: Generate checksums and evidence manifest
         shell: python
         run: |
