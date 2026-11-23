@@ -1,144 +1,24 @@
-<h1 align="center">🚀 Sparkience [The AI Lab] 🔬</h1>
+# Sparkience AI
 
-<p align="center">
-  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&duration=3000&pause=1000&color=7F00FF&center=true&vCenter=true&width=435&lines=AI+Tools+That+Slap.;Made+by+Nitin+Sagar+Boyeena.;Powering+Next-Gen+AI+Applications." alt="Typing SVG" />
-</p>
+We build local-first tools for working with documents, data and language models, alongside a financial literacy guide for readers in India. Start with the project that fits your task. Each repository has its own setup instructions and describes what the tool supports today.
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Contributions-Welcome-6A5ACD?style=flat-square&logo=github"/>
-  <img src="https://img.shields.io/badge/Built%20with-%F0%9F%92%A1AI-blueviolet?style=flat-square"/>
-</p>
+## Find a project
 
-<p align="center">
-  <strong>“Where ideas ignite, models collaborate, and innovation thrives.”</strong>
-</p>
+| Project | What you can do |
+| --- | --- |
+| [SparkDocs](https://github.com/Sparkience-AI/SparkDocs) | Ask questions about a PDF, Word document or PowerPoint deck and see citations to the retrieved passages. |
+| [SparkPrompt](https://github.com/Sparkience-AI/SparkPrompt) | Practice writing prompts, get feedback on a draft and browse templates you can use with any provider. [Try the demo](https://sparkprompt.streamlit.app/). |
+| [SparkOllama](https://github.com/Sparkience-AI/SparkOllama) | Chat with models running in Ollama through a browser interface that streams responses. |
+| [The Receptionist](https://github.com/Sparkience-AI/receptionist) | Route developer prompts to Ollama or a cloud model you choose. Each reply shows which route it took, why and the estimated cloud cost. |
+| [Sparkle AI](https://github.com/Sparkience-AI/Sparkle-AI) | Analyze clipboard text from a Windows hotkey or the system tray. Clipboard monitoring is optional and lasts for the session. |
+| [DSSential](https://github.com/Sparkience-AI/DSSential-The-AI-Chief) | Forecast a single time series, compare it with simple baselines and explore what-if scenarios. |
+| [Spark Insights](https://github.com/Sparkience-AI/spark-insights) | Profile a CSV or Excel file, run a regression or classification baseline, and export reproducible reports. |
+| [Sparkfolio](https://github.com/Sparkience-AI/sparkfolio) | Explore investing concepts and financial readiness in India through sourced explanations and worked examples. [Read the guide](https://sparkience-ai.github.io/sparkfolio/). |
 
-<img src="https://github.com/Sparkience-AI/.github/blob/main/banner.jpeg" height=auto width=auto>
----
+## Run a tool
 
-## 🧬 What is Sparkience?
+Use the setup instructions in the project README to run it on your machine. Hosted demos are available for some projects. Where a tool offers cloud models, you can use your own Gemini, OpenAI or Anthropic API key. Check the project README for what it sends to the provider. DSSential and Spark Insights compute results independently of optional AI summaries. Sparkfolio runs without a model or an account.
 
-> **Sparkience** is an open-source lab for practical, inspectable AI and data tools.
-> The projects are designed to run locally; hosted sites are demonstrations where available.
+## Get help or contribute
 
-The portfolio covers grounded document Q&A, prompt learning, forecasting, deterministic analytics,
-local-first chat, financial literacy, and an opt-in clipboard assistant. Generative tools support
-documented bring-your-own-key providers where appropriate; deterministic tools stay deterministic.
-
----
-
-## 🚀 Sparkience Arsenal
-
-### ⚡ [`Sparkle-AI`](https://github.com/Sparkience-AI/Sparkle-AI)
-> *Clipboard assistant smarter than your intern.*
-
-- 🧠 Real-time NLP clipboard monitoring  
-- ⌨️ System-tray controls and hotkey capture
-- 🔒 Explicit capture by default, with visible session-only clipboard monitoring as an opt-in
-- 📴 Local Ollama by default, with optional Gemini, OpenAI, or Anthropic BYOK routes
-
----
-
-### 🧠 [`DSSential - The AI Chief`](https://github.com/Sparkience-AI/DSSential-The-AI-Chief)
-> *Business brains in one tab.*
-
-- 📊 Validated univariate forecasting
-- 🔍 Transparent arithmetic scenario previews
-- 🧾 Reproducible diagnostics and limitations
-
----
-
-### 🔬 [`Spark Insights`](https://github.com/Sparkience-AI/spark-insights)
-> *Deterministic, inspectable data analysis.*
-
-- 📊 Dataset profiling, regression, and classification
-- ✅ Explicit targets, validation, and reproducible outputs
-- 🧠 Optional narration receives validated aggregate results only
-
----
-
-### 🧪 [`SparkPrompt`](https://github.com/Sparkience-AI/SparkPrompt)
-> *Prompt Engineering Gym.*
-
-- 🧪 Provider-independent prompt-learning exercises and templates
-- 🧠 Generates, evaluates, and refines prompts
-- 🔑 Gemini, OpenAI, or Anthropic with a user-supplied key
-- 🖥️ Web UI for interactive refinement
-
----
-
-### 📚 [`SparkDocs`](https://github.com/Sparkience-AI/SparkDocs)
-> *Your documents, now intelligent.*
-
-- 🔍 Hybrid dense + keyword retrieval with grounded citations
-- 📂 PDF, DOCX, and PPTX ingestion
-- 🔑 Gemini, OpenAI, or Anthropic with a user-supplied key
-
----
-
-### 💬 [`SparkOllama`](https://github.com/Sparkience-AI/SparkOllama)
-> *Ollama, but make it ✨aesthetic✨.*
-
-- 🌌 Sleek dark UI + chat history  
-- ⚙️ Local model selector and streamed responses
-- 🔑 Optional Gemini, OpenAI, or Anthropic with a user-supplied key
-
----
-
-### 💼 [`Sparkfolio`](https://github.com/Sparkience-AI/sparkfolio)
-> *A deterministic financial-literacy framework.*
-
-- 📚 Educational, non-advisory portfolio review
-- 🔎 Inspectable claims and evidence status
-- 🌐 Static and local-first, with no model or account dependency
-
----
-
-## 🌟 Vision
-
-> Democratize AI. Make it useful. Make it beautiful. Keep it open.
-
-Sparkience isn’t just a name. It’s a vibe.  
-We're here to empower solo builders and open-source rebels with tools that make AI accessible and practical. No hype. Just high signal.
-
----
-
-## 🛠️ Getting Started
-
-Each product repository documents its available:
-- 🔧 Setup steps
-- 👀 Usage examples
-- 🧪 Validation and limitations
-- 🔒 Privacy and provider boundaries
-
-Pick a tool, clone it, and break stuff. Then build better.
-
----
-
-## 🤝 Contributions
-
-✨ **We’re open to contributors!** ✨  
-Designers, prompt artists, developers, curious explorers — you’re welcome here.
-
-Start with the organization-wide [contribution guide](https://github.com/Sparkience-AI/.github/blob/main/CONTRIBUTING.md).
-Individual repositories may add product-specific instructions.
-
----
-
-## 📄 License
-
-Licenses are declared per repository. Most projects use MIT; Sparkle AI uses GPL-2.0. Check the
-target repository's `LICENSE` file before using or redistributing its code.
-
----
-
-## 📬 Let’s Connect
-
-- 📧 [LinkedIn → Nitin Sagar Boyeena](https://www.linkedin.com/in/nitin-sagar-boyeena/)
-- 💬 [Join Sparkience Discord](https://discord.gg/HKscyfKb)
-
----
-
-<p align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&height=150&section=footer&text=Built%20with%20❤️%20by%20Sparkience%20AI%20Lab&fontSize=18" />
-</p>
+Use the relevant repository’s Issues tab to report a bug, suggest an improvement or point out a factual correction. For pull requests, start with the [contribution guide](https://github.com/Sparkience-AI/.github/blob/main/CONTRIBUTING.md). For vulnerabilities, follow the [security reporting policy](https://github.com/Sparkience-AI/.github/blob/main/SECURITY.md). Check each repository’s license before reusing its code.
